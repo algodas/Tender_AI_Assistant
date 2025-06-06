@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Smart Assistant</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .response {
+    margin-top: 20px;
+    background-color: #f1f5f9;
+    padding: 15px;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    line-height: 1.5;
+    font-size: 15px;
+    border: 1px solid #d1d5db;
+  }
+  .upload-section {
+    margin-top: 30px;
+  }
+  .upload-box {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<h2>🤖 Tender Analysis Assistant</h2>
+
+<div class="upload-section">
+  <h3>📂 Upload Document for Analysis</h3>
+  <div class="upload-box" onclick="document.getElementById('promptFile').click()" ondragover="event.preventDefault(); this.style.borderColor='#2563eb';" ondragleave="this.style.borderColor='#ccc';" ondrop="event.preventDefault(); this.style.borderColor='#ccc'; setPromptFile(event.dataTransfer.files)">
+    <p id="promptFileName">Click or drag a file here to analyze</p>
+    <input id="promptFile" type="file" style="display:none" onchange="setPromptFile(this.files)" />
+  </div>
+  <textarea id="promptQuestion" placeholder="Write your question..." rows="4"></textarea>
+  <button onclick="uploadParaPrompt()">📄 Send for Analysis</button>
+  <div class="response" id="promptUploadStatus"></div>
+</div>
+
+<div class="upload-section">
+  <h3>🧠 Upload to Knowledge Base</h3>
+  <div class="upload-box" onclick="document.getElementById('baseFile').click()" ondragover="event.preventDefault(); this.style.borderColor='#2563eb';" ondragleave="this.style.borderColor='#ccc';" ondrop="event.preventDefault(); this.style.borderColor='#ccc'; setBaseFile(event.dataTransfer.files)">
+    <p id="baseFileName">Click or drag a file here to store in knowledge base</p>
+    <input id="baseFile" type="file" style="display:none" onchange="setBaseFile(this.files)" />
+  </div>
+  <button onclick="uploadParaBase()">📅 Send to Knowledge Base (xlsx not allowed; convert to Word, HTML or other)</button>
+  <div class="response" id="baseUploadStatus"></div>
+</div>
+
+<script>
+  let promptFile = null;
+  let baseFile = null;
+
+  function setPromptFile(files) {
+    promptFile = files[0];
+    const fileName = promptFile.name;
+    document.getElementById("promptFileName").textContent = `📌 ${fileName}`;
+    document.getElementById("promptQuestion").value = `Você é o analista de licitações e deve analisar este arquivo, ${fileName}, identificando todos os pontos de atenção, riscos e entregáveis. A sua base de referência deve ser a base de conhecimento armazenada no Vector Store relacionado ao assistente. Preciso que seja detalhado nesses aspectos, pois isso servirá de base para avaliarmos a viabilidade de participação.`;
+  }
+
+  function setBaseFile(files) {
+    baseFile = files[0];
+    document.getElementById("baseFileName").textContent = `📌 ${baseFile.name}`;
+  }
+
+  async function uploadParaPrompt() {
+    const status = document.getElementById("promptUploadStatus");
+    const question = document.getElementById("promptQuestion").value;
+
+    if (!promptFile || !question.trim()) {
+      status.innerHTML = "<em>File and question are required.</em>";
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", promptFile);
+    formData.append("message", question);
+    formData.append("assistant_id", "asst_B4TeSeI9f6S7706Afdxcsp7P");
+
+    status.innerHTML = "⏳ Sending file and question...";
+
+    try {
+      const res = await fetch("/assist/ask-file", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.resposta) {
+        status.innerHTML = `<strong>🧠 Response:</strong><br><div style='margin-top:10px;'>${data.resposta.replace(/\n/g, "<br>")}</div>`;
+      } else {
+        status.innerHTML = `<strong>❌ Error:</strong><br>${JSON.stringify(data)}`;
+      }
+    } catch (err) {
+      status.innerHTML = `<strong>Error:</strong> ${err}`;
+    }
+  }
+
+  async function uploadParaBase() {
+    const status = document.getElementById("baseUploadStatus");
+    if (!baseFile) {
+      status.innerHTML = "<em>No file selected.</em>";
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", baseFile);
+    formData.append("assistant_id", "asst_CuK3xFpKPy4Z7IbCrz26tX9z");
+    formData.append("vector_store", "true");
+
+    status.innerHTML = "⏳ Sending to knowledge base...";
+
+    try {
+      const res = await fetch("/assist/upload", {
+        method: "POST",
+        body: formData
+      });
+      const text = await res.text();
+      try {
+        const data = JSON.parse(text);
+        status.innerHTML = `<strong>✅ Success:</strong> ${data.status}`;
+      } catch {
+        status.innerHTML = `<strong>❌ Error:</strong><pre>${text}</pre>`;
+      }
+    } catch (err) {
+      status.innerHTML = `<strong>Error:</strong> ${err}`;
+    }
+  }
+</script>
+
+</body>
+</html>
+
