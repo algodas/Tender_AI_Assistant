@@ -1,4 +1,5 @@
-# 🧠 Project: Tender AI Assistant
+# 🧠 Project: Tender AI Assistant  
+Live Demo: https://projetos.tiago.cafe/assist3.html  
 
 This repository contains a complete solution for tender document analysis using an OpenAI assistant integrated with a vector knowledge base. The solution is composed of three main layers:
 
@@ -17,9 +18,18 @@ This repository contains a complete solution for tender document analysis using 
 * The prompt is automatically pre-filled based on the file name.
 * The frontend also allows uploading new documents to feed the knowledge base.
 * The backend separates assets by type:
-
   * The assistant's vector store is **exclusively populated** with knowledge base files.
   * Input files (e.g., tender documents for analysis) are **not stored** in the same vector store, only used during runtime.
+
+---
+
+## 🧠 How to Use
+
+Drag and drop the reference document related to the tender, and receive comprehensive insights for a project based on that document, using a knowledge base built from previous project history.
+
+You can also upload new documents to serve as additional references for the assistant’s knowledge base — this feature is currently **disabled by default** and requires contact for activation.
+
+🔗 To request access or enable advanced features, [connect on LinkedIn](https://www.linkedin.com/in/tiagogomespm/).
 
 ---
 
@@ -57,9 +67,8 @@ HTML Frontend (user interface)
 * `POST /assist/upload`: Uploads documents to feed the assistant's knowledge base.
 * `POST /assist/ask-file`: Sends a file and question for assistant analysis using its knowledge base and the uploaded file.
 * Fixed IDs used:
-
-  * `assistant_id`: asst\_CuK3xFpKPy4Z7IbCrz26tX9z
-  * `vector_store_id`: vs\_6838fccc5c8081918e032a89bf8975d6
+  * `assistant_id`: asst_CuK3xFpKPy4Z7IbCrz26tX9z
+  * `vector_store_id`: vs_6838fccc5c8081918e032a89bf8975d6
 
 ### Example usage in backend:
 
@@ -82,9 +91,9 @@ openai.beta.threads.messages.create(
 ## 💻 Frontend (HTML)
 
 * The `assist3.html` page has two sections:
-
   * Upload and analysis with auto-generated prompt
   * Upload to feed the vector store knowledge base
+
 * The auto-generated prompt:
 
 ```pt
@@ -119,9 +128,3 @@ Open `assist3.html` in a browser to start using the tool.
 
 * Files submitted for analysis are not persistently stored.
 * Only files explicitly uploaded through the knowledge base form are linked to the assistant's vector store.
-
----
-
-## 📬 Contact
-
-For questions or suggestions, please contact the project maintainer.
