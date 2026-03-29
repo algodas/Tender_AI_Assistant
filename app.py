@@ -16,9 +16,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
 app.url_map.strict_slashes = False
 
-ASSISTANT_ID_DEFAULT = "asst_HPqXDHHf9uo5cxmRVG3"
-ASSISTANT_ID_LICITACAO = "asst_CuK3xFpKPy4Z7IbCr"
-VECTOR_STORE_ID = "vs_6838fccc5c8081918e032"
+ASSISTANT_ID_DEFAULT = ""
+ASSISTANT_ID_LICITACAO = ""
+VECTOR_STORE_ID = ""
 
 @app.route("/assist/ask", methods=["POST"])
 def ask():
