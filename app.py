@@ -5,8 +5,11 @@ import os
 import time
 import traceback
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
 
-openai.api_key = ""
+load_dotenv()
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 UPLOAD_FOLDER = "/var/www/html/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -16,9 +19,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
 app.url_map.strict_slashes = False
 
-ASSISTANT_ID_DEFAULT = ""
-ASSISTANT_ID_LICITACAO = ""
-VECTOR_STORE_ID = ""
+ASSISTANT_ID_DEFAULT = os.getenv("ASSISTANT_ID_DEFAULT")
+ASSISTANT_ID_LICITACAO = os.getenv("ASSISTANT_ID_LICITACAO")
+VECTOR_STORE_ID = os.getenv("VECTOR_STORE_ID")
 
 @app.route("/assist/ask", methods=["POST"])
 def ask():
@@ -169,4 +172,3 @@ def process_file_request(assistant_id):
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5100, debug=True)
- 
