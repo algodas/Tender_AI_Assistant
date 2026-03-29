@@ -11,7 +11,7 @@ load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-UPLOAD_FOLDER = "/var/www/html/uploads"
+UPLOAD_FOLDER = "/path/html/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 app = Flask(__name__)
